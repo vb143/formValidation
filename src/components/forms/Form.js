@@ -1,23 +1,61 @@
-import {Container, Grid, TextField} from "@mui/material";
+import {Autocomplete, Container, Grid, TextField} from "@mui/material";
 import Header from "../layout/Header";
+import {Countries} from "../countriesList/Countries";
+import postalCodes from "postal-codes-js";
 
-const Form = ({handleChange, formStruture}) => {
+const Form = ({formStructure, formValues, setFormValues}) => {
+
+
+    const handleCheckPasscode = (formValues) => {
+        return   postalCodes.validate(formValues.code, formValues.passcode);
+    }
+
+
+    const handleChange = (event, value) => {
+        value ? setFormValues({...formValues, code: value.code, country: value.name}):
+            setFormValues({...formValues, [event.target.id]: event.target.value});
+    }
+
 
     return (
         <Container maxWidth={false}>
             <Header/>
             <Grid container spacing={2}>
                 {
-                    formStruture.map((field) => (
-                        <Grid item xs={field.grid}>
-                            <TextField
-                                id={field.line1}
-                                label= {field.label}
-                                type={field.type}
-                                variant="outlined"
-                                fullWidth
-                                onChange={handleChange}
-                            />
+                    formStructure.map((field, id) => (
+                        <Grid item xs={field.grid} key={id}>
+                            {field.id === "code" ?
+                                // eslint-disable-next-line react/jsx-no-undef
+                                <Autocomplete
+                                    id={field.id}
+                                    onChange={handleChange}
+                                    options={Countries}
+                                    getOptionLabel={(option) => option.code}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            id={field.line1}
+                                            fullWidth
+                                            label={field.label}
+                                            variant="outlined"
+                                            // onChange={(e) => this.onSearchTerm(e.target.value)}
+                                        />
+                                    )}
+                                />
+                                :
+                                <TextField
+                                    id={field.id}
+                                    label={field.label}
+                                    type={field.type}
+                                    helperText={(field.required && !formValues[field.id]) && ( field.id === 'passcode'? handleCheckPasscode(formValues) : "Required Field")}
+                                    value={formValues[field.id]}
+                                    required={field.required}
+                                    placeholder={field.placeholder}
+                                    variant="outlined"
+                                    fullWidth
+                                    onChange={handleChange}
+                                />
+                            }
                         </Grid>
                     ))
                 }
