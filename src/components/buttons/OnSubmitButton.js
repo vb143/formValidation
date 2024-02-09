@@ -1,9 +1,10 @@
 import {Box, Button} from "@mui/material";
 
-const OnSubmitButton = ({handleSubmit}) => {
-  return(
+const OnSubmitButton = ({disabled, handleSubmit}) => {
+
+    return(
     <Box mt={2}>
-      <Button variant={"contained"} onClick={handleSubmit}>Submit</Button>
+      <Button disabled={disabled} variant={"contained"} onClick={handleSubmit}>Submit</Button>
     </Box>
   )
 }

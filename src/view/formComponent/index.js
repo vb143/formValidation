@@ -1,10 +1,13 @@
 import Form from "../../components/forms/Form";
 import {useState} from "react";
 import OnSubmitButton from "../../components/buttons/OnSubmitButton";
+import {Snackbar} from "@mui/material";
+import {SnackbarOrigin} from "@mui/material/Snackbar/Snackbar";
 
 
 const AddressForm = () => {
     const [formValues, setFormValues] = useState({});
+    const [open, setOpen] = useState(false);
 
    const formStructure = [
        {
@@ -46,7 +49,7 @@ const AddressForm = () => {
        {
            index: 4,
            label: "Postcode",
-           type: "number",
+           type: "text",
            id: "passcode",
            grid: 4,
            required: true,
@@ -57,14 +60,14 @@ const AddressForm = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(formValues);
+        setOpen(true)
     }
 
 
     return(
     <div>
-      <Form formStructure={formStructure} setFormValues={setFormValues} formValues={formValues}/>
-      <OnSubmitButton handleSubmit={handleSubmit}/>
+      <Form formStructure={formStructure} setFormValues={setFormValues} formValues={formValues} handleSubmit={handleSubmit}/>
+        <Snackbar open={open} anchorOrigin={{vertical: 'top', horizontal: 'right'}} autoHideDuration={6000} onClose={()=>setOpen(false)} message="Form Submitted Successfully" />
     </div>
   )
 }

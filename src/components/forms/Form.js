@@ -2,12 +2,24 @@ import {Autocomplete, Container, Grid, TextField} from "@mui/material";
 import Header from "../layout/Header";
 import {Countries} from "../countriesList/Countries";
 import postalCodes from "postal-codes-js";
+import OnSubmitButton from "../buttons/OnSubmitButton";
 
-const Form = ({formStructure, formValues, setFormValues}) => {
+const Form = ({formStructure, formValues, setFormValues, handleSubmit}) => {
+
+    const validateForm = (values) => {
+        const errors = [];
+
+        for (const field of formStructure) {
+            if (!values[field.id]) {
+                field.required && (errors[field.index] = `${field.label} is required`);
+            }
+        }
+        return errors;
+    };
 
 
     const handleCheckPasscode = (formValues) => {
-        return   postalCodes.validate(formValues.code, formValues.passcode);
+        return  postalCodes.validate(formValues.code, formValues.passcode);
     }
 
 
@@ -47,7 +59,7 @@ const Form = ({formStructure, formValues, setFormValues}) => {
                                     id={field.id}
                                     label={field.label}
                                     type={field.type}
-                                    helperText={(field.required && !formValues[field.id]) && ( field.id === 'passcode'? handleCheckPasscode(formValues) : "Required Field")}
+                                    helperText={ field.id === 'passcode'? handleCheckPasscode(formValues) : (field.required && !formValues[field.id]) && "Required Field"}
                                     value={formValues[field.id]}
                                     required={field.required}
                                     placeholder={field.placeholder}
@@ -60,6 +72,8 @@ const Form = ({formStructure, formValues, setFormValues}) => {
                     ))
                 }
             </Grid>
+
+            <OnSubmitButton disabled={validateForm(formValues).length !== 0 || handleCheckPasscode(formValues) !== true} handleSubmit={handleSubmit}/>
         </Container>
     )
 
